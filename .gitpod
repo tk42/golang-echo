@@ -1,1 +1,1 @@
-image: jimako1989/golang-echo:latest
+image: jimako1989/golang-dep:latest
