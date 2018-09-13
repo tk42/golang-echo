@@ -53,4 +53,5 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
 # Install go dep
-RUN go get -u github.com/golang/dep/cmd/dep && dep ensure
+RUN go get -u github.com/golang/dep/cmd/dep
+RUN dep version
