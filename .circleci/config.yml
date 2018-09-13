@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: jimako1989/golang_dep:latest
+    working_directory: /go
+    steps:
+        - checkout
+        - setup_remote_docker
+        - run:
+            name : build
+            command : make build
