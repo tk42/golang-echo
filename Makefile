@@ -1,12 +1,13 @@
 .DEFAULT_GOAL := build
 
 .PHONY: build
-build : 
+build :
 	docker-compose up -d
 	docker-compose exec -T app make _build || exit 1
 
 .PHONY: _build
-_build : 
+_build :
+	go fmt ./golang-echo/main/...
 	go build ./golang-echo/main/... || exit 1
 
 .PHONY: test
@@ -16,6 +17,7 @@ test :
 
 .PHONY: _test
 _test :
+	go fmt ./golang-echo/test/...
 	go test -cover ./golang-echo/test/... || exit 1
 
 .PHONY: run
