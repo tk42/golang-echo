@@ -1,5 +1,5 @@
 FROM golang:1.11.0-stretch
-MAINTAINER Tadashi KOJIMA
+MAINTAINER Tadashi KOJIMA <nsplat@gmail.com>
 
 # install basic commands
 RUN apt-get update && apt-get install -y vim less
