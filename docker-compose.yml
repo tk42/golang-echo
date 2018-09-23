@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    app:
+      image: jimako1989/golang_dep:latest
+      volumes:
+        - ./:/go
+      stdin_open: true
+      tty: true
+      env_file: .env
+
