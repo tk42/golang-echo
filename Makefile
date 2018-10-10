@@ -8,7 +8,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test -v -cover
 GOGET=$(GOCMD) get
 GOINSTALL=$(GOCMD) install
-BINARY_NAME=golang-echo
+WORKING_DIR=src/golang-echo
 OUTPUT_DIR=bin
 
 all: _clean _build _test _install
@@ -27,7 +27,7 @@ _clean :
 	@rm -rf $(OUTPUT_DIR)
 
 format :
-	go fmt ./$(BINARY_NAME)/...
+	go fmt ./$(WORKING_DIR)/...
 
 .PHONY: build
 build :
@@ -35,7 +35,7 @@ build :
 
 .PHONY: _build
 _build : format
-	$(GOBUILD) -v ./$(BINARY_NAME)/...
+	$(GOBUILD) -v ./$(WORKING_DIR)/...
 
 .PHONY: test
 test :
@@ -43,9 +43,9 @@ test :
 
 .PHONY: _test
 _test : format
-	$(GOTEST) ./$(BINARY_NAME)/...
+	$(GOTEST) ./$(WORKING_DIR)/...
 
 .PHONY: _install
 _install :
-	@. ./setenv.sh; $(GOINSTALL) ./$(BINARY_NAME)/...
+	@. ./setenv.sh; $(GOINSTALL) ./$(WORKING_DIR)/...
 	@echo "Install successful!"
