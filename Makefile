@@ -15,10 +15,10 @@ all: _clean _build _test _install
 
 .PHONY: setenv
 setenv :
-	./setenv.sh
+	. ./setenv.sh
 
 .PHONY: clean
-clean : setenv
+clean :
 	$(DOCKERCMD) _clean
 
 .PHONY: _clean
@@ -47,4 +47,5 @@ _test : format
 
 .PHONY: _install
 _install :
-	$(GOINSTALL)  ./$(BINARY_NAME)/...
+	@. ./setenv.sh; $(GOINSTALL) ./$(BINARY_NAME)/...
+	@echo "Install successful!"
