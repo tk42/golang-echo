@@ -1,5 +1,5 @@
 # golang-echo
-This sample repository is an echo server with Golang that requests/responds gRPC (protoBuf) via Redis.
+This sample repository is an echo server with gRPC(protobuf) implemented with Golang.
 
 ## Survey
 GolangでgRPCアプリケーションを開発するにあたって必要そうな知識を整理する
@@ -48,14 +48,65 @@ Protocol Buffers利用フロー([https://www.apps-gcp.com/grpc-go/](https://www.
  - [gRPC command line tool](https://github.com/grpc/grpc/blob/master/doc/command_line_tool.md) はコマンドラインでgRPCを呼び出すためのコマンド(gRPCはcurl等で手軽に動作確認できないため)
  - [gRPCurl](https://github.com/fullstorydev/grpcurl) は同上のCLIツール．4.5kスター(2021/02時点)．他にもgRPCのクライアントCLIツールはたくさんある模様. [gRPC の CUI のクライアントツールを調べてまとめてみた](https://www.techscore.com/blog/2019/09/26/grpc-cui-client-tools/)
 
+## How to use
+
+[Protocol Buffers: ざっくりとした入門](https://qiita.com/kitauji/items/fdbd052c19dad28ab067) や [いまさらだけどgRPCに入門したので分かりやすくまとめてみた](https://qiita.com/gold-kou/items/a1cc2be6045723e242eb) などに従いつつ，golang製サーバーがprotobufで書かれたスキーマで通信されている様子をみる．
+
+### スキーマからstubコードの生成
+
+スキーマ ```helloworld.proto``` を元に，```protoc``` でgolang向けのstubコードを生成する．
+
+golang向けのstubコードの生成にはプラグイン(google.golang.org/protobuf/cmd/protoc-gen-go)が必要になるが，protocコマンドとそのプラグインがセットになった仮想環境```ghcr.io/tk42/protoc```イメージを使って，そのあたりの工程はスキップする．（便利！）
+
+```
+docker compose run protoc
+```
+
+```.proto```では生成されるパッケージの指定```go_packages```を指定しなければエラーになる．
+
+protocの引数は```--go_grpc_out``` を含めることを忘れないようにする．これがないとスタブコードに```RegisterXXX``` が作成されない．
+
+その他は[protocの使い方](https://christina04.hatenablog.com/entry/protoc-usage)を参照する
+
+### 生成されたstubコードをサーバコードに埋め込む
+生成されたスタブコードは ```proto/autogen/helloworld.pb.go``` に配置される．
+
+このコードを```server/main.go```に埋め込み，呼び出すようにする．
+
+### デモ
+#### サーバーの起動
+サーバ側は通常のgolangコンテナでビルド，実行を行う．
+
+#### クライアントの起動
+gRPC版の```curl```ともいうべきCLIツール ```grpcurl``` のWebフロントラッパー fullstorydev/grpcurl を仮想化されたイメージ wongnai/grpcui を利用して，ブラウザ経由でサーバとgRPC通信する．
+
+#### デモを起動
+```
+docker compose up server client
+```
+
+そして，[http://0.0.0.0:5000/](http://0.0.0.0:5000/) へブラウザからアクセスする
+![View](main_view.png)
+
+試しに，リクエストとして ```name=John``` を送信すると…
+![request](request.png)
+
+レスポンスの ```message``` に ```Hello John``` が返される．
+![response](response.png)
+
+## 応用編
+### スキーマの変更
+ - [Proto3 Language Guide（和訳）](https://qiita.com/CyLomw/items/9aa4551bd6bb9c0818b6)
+ - [Protocol Buffers Proto3 文法 早めぐり](https://blog1.mammb.com/entry/2019/10/03/212044)
+
+### JSON にしたい
+ - [gRPCのシリアライゼーション形式をJSONにする](https://qiita.com/yugui/items/238dcdb75cd40d0f1ece)
+
+
 ### Reference
  - [gRPCって何？](https://qiita.com/oohira/items/63b5ccb2bf1a913659d6)
- - [いまさらだけどgRPCに入門したので分かりやすくまとめてみた](https://qiita.com/gold-kou/items/a1cc2be6045723e242eb)
- - [Protocol Buffers: ざっくりとした入門](https://qiita.com/kitauji/items/fdbd052c19dad28ab067)
  - [Protocol Buffers用 Go言語APIの APIv1 と APIv2 の差異](https://qiita.com/kitauji/items/bab05cc8215abe8a6431)
  - [Go言語でのgRPCコード生成(2020年10月以降版)](https://note.com/dd_techblog/n/nb8b925d21118)
  - [GoGo Protobufのメリット・デメリット](https://christina04.hatenablog.com/entry/gogo-protobuf-merit-demerit)
  - [go-grpc-middlewareを一通り試してみる](https://qiita.com/Morix1500/items/7a20d76a931af68d860d)
  - [Go + gRPCで開発を始められるDockerfileを作る](https://qiita.com/keitakn/items/434091ff488296951ab6)
-
-## How to use

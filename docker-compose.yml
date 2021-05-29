@@ -1,9 +1,33 @@
 version: '3'
 
 services:
-    app:
-      image: jimako1989/golang_dep:latest
-      volumes:
-        - ./:/go
-      stdin_open: true
-      tty: true
+  protoc: 
+    image: ghcr.io/tk42/protoc
+    volumes: 
+      - .:/tmp
+    working_dir: "/tmp"
+    command: ["protoc", "--go_out=./proto", "--go-grpc_out=./proto", "-I.", "./proto/helloworld.proto"]
+
+  server:
+    image: golang:alpine
+    container_name: golang-echo-server
+    volumes: 
+      - .:/home
+    working_dir: "/home"
+    environment:
+      - GOPATH=
+    ports:
+      - 5000:5000
+    command: ["go", "run", "main.go"]
+
+  client:
+    image: wongnai/grpcui
+    environment: 
+      - GRPCUI_SERVER=golang-echo-server:5000
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/home
+    command: ["sh", "-c", "/home/wait-for-it.sh golang-echo-server:5000 -- /usr/local/scripts/start.sh"]
+    depends_on: 
+      - server
