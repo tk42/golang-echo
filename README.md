@@ -86,13 +86,13 @@ docker compose up server client
 ```
 
 そして，[http://0.0.0.0:5000/](http://0.0.0.0:5000/) へブラウザからアクセスする
-![View](main_view.png)
+![View](assets/main_view.png)
 
 試しに，リクエストとして ```name=John``` を送信すると…
-![request](request.png)
+![request](assets/request.png)
 
 レスポンスの ```message``` に ```Hello John``` が返される．
-![response](response.png)
+![response](assets/response.png)
 
 ## 応用編
 ### スキーマの変更
